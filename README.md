@@ -5,7 +5,7 @@
 ![Sample of pendulum execution in Chrome, Fedora 19](sample.png)
 
 
-Details: 
+#### Details: 
 1. Add 100 items
 2. Select 100 items (one by one)
 3. Remove 100 items (one by one)
