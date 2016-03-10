@@ -23,6 +23,20 @@ nav { position: absolute; right: 10px; }
   <div id="analysis" style="float:left; display: none;">
     <div id="barchart_values"></div>
     <div style="width: 400px; margin: 30px;">
+
+      <p>The reason why it's so fast in Pendulum, is that adding 100 items runs between two
+      request animation frames. Ids of items are gathered in signals as lists
+      and the instant function just apply the action to all elements of the list
+      in the following requestAnimationFrame. So it takes only one logical
+      instant which is basically here the execution of a list iterator.
+      </p>
+      <p>
+        The model is represented as an OCaml Hashtbl and accessing an element is very
+        fast thanks to the js_of_ocaml compiler.
+      </p>
+
+      <br/>
+
       <p>Notice that Om, Mercury, and Elm consistently do really well
       compared to the other entries.
       </p>
