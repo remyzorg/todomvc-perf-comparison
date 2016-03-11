@@ -100,7 +100,7 @@ module Model = struct
   let get_item_edit id = Format.sprintf "it-edit-%d" id
   let get_item_lbl id = Format.sprintf "it-lbl-%d" id
 
-  let get_li id : divElement Js.t = get_item_li id @> CoerceTo.div
+  let get_li id : liElement Js.t = get_item_li id @> CoerceTo.li
   let get_edit id : inputElement Js.t = get_item_edit id @> CoerceTo.input
   let get_lbl id : labelElement Js.t = get_item_lbl id @> CoerceTo.label
 
@@ -176,9 +176,10 @@ module View = struct
     =
     let open Html5 in
     let open Pendulum in
-    let lbl_content = label ~a:[a_ondblclick (fun evt ->
-        Machine.set_present_value dblclick_sig cnt; animate (); true)]
-        [pcdata @@ Js.to_string (str##trim)]
+    let lbl_content = label ~a:[
+        a_id @@ get_item_lbl cnt;
+        a_ondblclick (fun evt -> Machine.set_present_value dblclick_sig cnt; animate (); true)
+      ] [pcdata @@ Js.to_string (str##trim)]
     in
     let btn_rm = button ~a:[a_class ["destroy"]; a_onclick (fun evt ->
         Machine.set_present_value delete_sig cnt; animate (); true)] []
@@ -200,16 +201,16 @@ module View = struct
       let a = [
         a_input_type `Checkbox; a_class ["toggle"];
         a_onclick (fun _ ->
-            Pendulum.Machine.set_present_value select_sig cnt; animate (); true)
+            Machine.set_present_value select_sig cnt; animate (); true)
       ] in
       let a = if selected then (a_checked `Checked) :: a else a
       in input ~a ()
     in
     let mdiv = div ~a:[a_class ["view"]] [tgl_done; lbl_content; btn_rm] in
-    let item_li = To_dom.of_li @@ li [mdiv; input_edit_item] in
+    let item_li = To_dom.of_li @@ li ~a:[a_id @@ get_item_li cnt] [mdiv; input_edit_item] in
     item_li##.className := Js.string (if selected then "completed" else "");
     item_li##.style##.display := Js.string @@ style_of_visibility false visibility;
-    To_dom.({txt;
+    item_li, To_dom.({txt;
              (* item_li; *)
              (* edit = of_input input_edit_item; *)
              (* lbl = of_label lbl_content; *)
@@ -224,10 +225,10 @@ module View = struct
     let nb = List.fold_left (fun acc str ->
 
         let cnt = cnt.value + acc + 1 in
-        let it = create_item animate delete_sig blur_sig dblclick_sig
+        let item_li, it = create_item animate delete_sig blur_sig dblclick_sig
             keydown_sig select_sig None cnt str selected
         in Hashtbl.add tasks cnt it;
-        Dom.appendChild items_ul @@ Model.get_li cnt;
+        Dom.appendChild items_ul item_li;
         acc + 1
       ) 0 strs
     in
@@ -251,9 +252,9 @@ module View = struct
         with Not_found -> acc
       ) 0 ids
 
-  let add_append h items_ul cnt it =
+  let add_append h items_ul cnt (item_li, it) =
     Hashtbl.add h cnt it;
-    Dom.appendChild items_ul @@ Model.get_li cnt
+    Dom.appendChild items_ul item_li
 
   let edited_item h id =
     try
