@@ -263,7 +263,7 @@ Suites.push({
 Suites.push({
     name: 'pendulum',
     url: 'todomvc/pendulum/index.html',
-    version: 'with js_of_ocaml.2.7, ocaml 4.02.3',
+    version: 'with js_of_ocaml.2.7',
     prepare: function (runner, contentWindow, contentDocument) {
         return runner.waitForElement('#new-todo').then(function (element) {
             element.focus();
