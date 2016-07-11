@@ -1,6 +1,6 @@
 # TodoMVC Performance Comparison
 
-[**Run it yourself**](http://remyzorg.github.io/apps/todomvc-perf-comparison/) to see how it works on your machine or in other browsers!
+[**Run it yourself**](http://remyzorg.github.io/apps/todomvc-perf/index.html) to see how it works on your machine or in other browsers!
 
 
 
